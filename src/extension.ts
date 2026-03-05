@@ -115,4 +115,5 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(watcher);
 }
 
+// Clean up resources on deactivation
 export function deactivate() { }
