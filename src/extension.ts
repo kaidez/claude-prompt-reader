@@ -9,6 +9,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Get API key from VS Code settings
     const apiKey = vscode.workspace.getConfiguration('claudePromptReader').get<string>('apiKey');
 
+    // If no API key has been entered in VS Code settings, show error message
     if (!apiKey) {
       vscode.window.showErrorMessage('No API key found. Please add it in Settings → Claude Prompt Reader → Api Key.');
       return;
