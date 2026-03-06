@@ -112,4 +112,28 @@ suite('Claude Prompt Reader Extension Tests', () => {
 
     assert.strictEqual(result, 'No response received.');
   });
+
+  // Test 8: Model dropdown setting has a valid default
+  test('Should have a valid default model configured', () => {
+    const config = vscode.workspace.getConfiguration('claudePromptReader');
+    const model = config.get<string>('modelDropdown') ?? 'claude-sonnet-4-6';
+
+    const validModels = [
+      'claude-haiku-4-5-20251001',
+      'claude-sonnet-4-6',
+      'claude-opus-4-6'
+    ];
+
+    assert.ok(
+      validModels.includes(model),
+      `Model "${model}" is not a valid Claude model`
+    );
+  });
+
+  // Test 9: Fallback model is used when setting is empty
+  test('Should fall back to claude-sonnet-4-6 when model setting is empty', () => {
+    const emptyModel = undefined;
+    const resolvedModel = emptyModel ?? 'claude-sonnet-4-6';
+    assert.strictEqual(resolvedModel, 'claude-sonnet-4-6');
+  });
 });

@@ -8,6 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // End user needs to enter their API key in VS Code settings...grab it from there
     const apiKey = vscode.workspace.getConfiguration('claudePromptReader').get<string>('apiKey');
+    const claudeModel = vscode.workspace.getConfiguration('claudePromptReader').get<string>('modelDropdown');
 
     // If no API key has been entered in VS Code settings, show error message
     if (!apiKey) {
@@ -53,8 +54,8 @@ export function activate(context: vscode.ExtensionContext) {
       cancellable: false
     }, async () => {
       try {
-        const message = await client.messages.create({
-          model: 'claude-sonnet-4-6',
+        const message = await client.messages.create({ // Connect to the Anthropic API with the prompt text
+          model: claudeModel ?? 'claude-sonnet-4-6', // use claude-sonnet-4-6 if nothing is chosen
           max_tokens: 1024,
           messages: [{ role: 'user', content: promptText }]
         });
@@ -84,6 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
   watcher.onDidChange(async (uri) => {
     const promptText = fs.readFileSync(uri.fsPath, 'utf8');
     const apiKey = vscode.workspace.getConfiguration('claudePromptReader').get<string>('apiKey');
+    const claudeModel = vscode.workspace.getConfiguration('claudePromptReader').get<string>('modelDropdown');
 
     if (!apiKey) { return; }
 
@@ -95,8 +97,8 @@ export function activate(context: vscode.ExtensionContext) {
       cancellable: false
     }, async () => {
       try {
-        const message = await client.messages.create({
-          model: 'claude-sonnet-4-6',
+        const message = await client.messages.create({ // Connect to the Anthropic API with the prompt text
+          model: claudeModel ?? 'claude-sonnet-4-6', // use claude-sonnet-4-6 if nothing is chosen
           max_tokens: 1024,
           messages: [{ role: 'user', content: promptText }]
         });

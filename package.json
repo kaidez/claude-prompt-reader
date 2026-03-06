@@ -25,6 +25,21 @@
           "type": "string",
           "default": "",
           "description": "Your Anthropic API key"
+        },
+        "claudePromptReader.modelDropdown": {
+          "type": "string",
+          "default": "claude-sonnet-4-6",
+          "enum": [
+            "claude-haiku-4-5-20251001",
+            "claude-sonnet-4-6",
+            "claude-opus-4-6"
+          ],
+          "enumDescriptions": [
+            "Claude Haiku — fastest and most affordable",
+            "Claude Sonnet — balanced speed and intelligence (recommended)",
+            "Claude Opus — most powerful, slower and more expensive"
+          ],
+          "description": "Select which Claude model to use for processing prompts"
         }
       }
     }
