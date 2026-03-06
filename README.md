@@ -115,6 +115,8 @@ In whatever workspace you open in the dev host, create a `prompts/` subfolder an
 ## Sample Output
 
 When a prompt file is processed, a new Markdown tab opens with this structure:
+## Extension in Action
+![Claude Prompt Reader in action](./assets/screenshot.png)
 
 ```
 PROMPT:
