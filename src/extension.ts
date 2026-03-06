@@ -15,6 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
+    // Initialize Anthropic client with the provided API key
     const client = new Anthropic({ apiKey });
 
     const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
