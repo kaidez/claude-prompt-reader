@@ -6,7 +6,7 @@ import Anthropic from '@anthropic-ai/sdk';
 export function activate(context: vscode.ExtensionContext) {
   let disposable = vscode.commands.registerCommand('claude-prompt-reader.readPrompts', async () => {
 
-    // Get API key from VS Code settings
+    // End user needs to enter their API key in VS Code setting..grab it from there
     const apiKey = vscode.workspace.getConfiguration('claudePromptReader').get<string>('apiKey');
 
     // If no API key has been entered in VS Code settings, show error message
@@ -26,6 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
+    // Look for a "prompts" folder in the root of the workspace
     const promptsPath = path.join(workspacePath, 'prompts');
 
     if (!fs.existsSync(promptsPath)) {
@@ -33,6 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
+    // Find all .txt and .md files in the prompts folder ONLY
     const files = fs.readdirSync(promptsPath).filter(f => f.endsWith('.txt') || f.endsWith('.md'));
 
     if (files.length === 0) {
@@ -40,6 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
+    // Read the first file's content and send it to Claude
     const firstFile = path.join(promptsPath, files[0]);
     const promptText = fs.readFileSync(firstFile, 'utf8');
 
