@@ -6,7 +6,7 @@ import Anthropic from '@anthropic-ai/sdk';
 export function activate(context: vscode.ExtensionContext) {
   let disposable = vscode.commands.registerCommand('claude-prompt-reader.readPrompts', async () => {
 
-    // End user needs to enter their API key in VS Code setting..grab it from there
+    // End user needs to enter their API key in VS Code settings...grab it from there
     const apiKey = vscode.workspace.getConfiguration('claudePromptReader').get<string>('apiKey');
 
     // If no API key has been entered in VS Code settings, show error message
