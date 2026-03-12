@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+// The shape of all coming and going messages.  "extension.ts" needs this to manage the convo history
 export interface Message {
   role: 'user' | 'assistant';
   content: string;

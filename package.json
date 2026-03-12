@@ -15,7 +15,11 @@
     "commands": [
       {
         "command": "claude-prompt-reader.readPrompts",
-        "title": "Claude: Read Prompts"
+        "title": "Claude Prompt Reader: Read Prompts"
+      },
+      {
+        "command": "claude-prompt-reader.clearHistory",
+        "title": "Claude Prompt Reader: Clear History"
       }
     ],
     "configuration": {
@@ -54,9 +58,9 @@
   "devDependencies": {
     "@types/glob": "^9.0.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^25.3.5",
+    "@types/node": "^25.5.0",
     "@types/sinon": "^21.0.0",
-    "@types/vscode": "^1.109.0",
+    "@types/vscode": "^1.110.0",
     "@vscode/test-electron": "^2.5.2",
     "glob": "^13.0.6",
     "mocha": "^11.7.5",
