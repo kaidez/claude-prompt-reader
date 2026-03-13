@@ -34,16 +34,13 @@ export function activate(context: vscode.ExtensionContext) {
       cancellable: false
     }, async () => {
       try {
-        // Load existing history for this prompt file
         const history = loadHistory(workspacePath, promptFilePath);
 
-        // Append current user message
         const updatedHistory: Message[] = [
           ...history,
           { role: 'user', content: promptText }
         ];
 
-        // Send full conversation history to Claude
         const message = await client.messages.create({
           model: claudeModel ?? 'claude-sonnet-4-6',
           max_tokens: 1024,
@@ -54,14 +51,12 @@ export function activate(context: vscode.ExtensionContext) {
           ? message.content[0].text
           : 'No response received.';
 
-        // Append Claude's response to history and save
         const finalHistory: Message[] = [
           ...updatedHistory,
           { role: 'assistant', content: response }
         ];
         saveHistory(workspacePath, promptFilePath, finalHistory);
 
-        // Show result in a new tab
         const turnCount = Math.floor(finalHistory.length / 2);
         const doc = await vscode.workspace.openTextDocument({
           content: `CONVERSATION TURN ${turnCount}\n\nPROMPT:\n${promptText}\n\n---\n\nCLAUDE'S RESPONSE:\n${response}`,
@@ -73,6 +68,25 @@ export function activate(context: vscode.ExtensionContext) {
       } catch (error) {
         vscode.window.showErrorMessage(`Claude API error: ${error}`);
       }
+    });
+  }
+
+  // ─── Helper: get watched file selection ───────────────────────────────────
+  async function selectWatchedFile(promptsPath: string): Promise<string | undefined> {
+    const files = fs.readdirSync(promptsPath)
+      .filter(f => f.endsWith('.txt') || f.endsWith('.md'));
+
+    if (files.length === 0) {
+      vscode.window.showErrorMessage('No .txt or .md files found in prompts folder.');
+      return undefined;
+    }
+
+    if (files.length === 1) {
+      return files[0];
+    }
+
+    return await vscode.window.showQuickPick(files, {
+      placeHolder: 'Select a prompt file to watch'
     });
   }
 
@@ -92,19 +106,30 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      const files = fs.readdirSync(promptsPath).filter(f => f.endsWith('.txt') || f.endsWith('.md'));
-      if (files.length === 0) {
-        vscode.window.showErrorMessage('No .txt or .md files found in prompts folder.');
-        return;
+      // Check if the focused editor is a prompt file
+      const activeEditor = vscode.window.activeTextEditor;
+      const activePath = activeEditor?.document.uri.fsPath;
+      const isPromptFile = activePath &&
+        activePath.startsWith(promptsPath) &&
+        (activePath.endsWith('.txt') || activePath.endsWith('.md'));
+
+      let selectedFilePath: string;
+
+      if (isPromptFile && activePath) {
+        // Use the focused file directly — no QuickPick needed
+        selectedFilePath = activePath;
+      } else {
+        // No prompt file focused — fall back to QuickPick
+        const selectedFile = await selectWatchedFile(promptsPath);
+        if (!selectedFile) { return; }
+        selectedFilePath = path.join(promptsPath, selectedFile);
       }
 
-      const firstFile = path.join(promptsPath, files[0]);
-      const promptText = fs.readFileSync(firstFile, 'utf8');
-
+      const promptText = fs.readFileSync(selectedFilePath, 'utf8');
       await sendToClaudeWithHistory(
-        firstFile,
+        selectedFilePath,
         promptText,
-        `Sending "${files[0]}" to Claude...`
+        `Sending "${path.basename(selectedFilePath)}" to Claude...`
       );
     }
   );
@@ -121,26 +146,39 @@ export function activate(context: vscode.ExtensionContext) {
 
       const promptsPath = path.join(workspacePath, 'prompts');
       if (!fs.existsSync(promptsPath)) {
-        vscode.window.showErrorMessage('No prompts folder found in this workspace.');
+        vscode.window.showErrorMessage('No prompts folder found.');
         return;
       }
 
-      const files = fs.readdirSync(promptsPath).filter(f => f.endsWith('.txt') || f.endsWith('.md'));
-      if (files.length === 0) {
-        vscode.window.showErrorMessage('No .txt or .md files found in prompts folder.');
+      const scope = await vscode.window.showQuickPick(
+        [
+          { label: 'Clear history for one prompt file', value: 'single' },
+          { label: 'Clear all history for all prompt files', value: 'all' }
+        ],
+        { placeHolder: 'What would you like to clear?' }
+      );
+
+      if (!scope) { return; }
+
+      if (scope.value === 'all') {
+        const confirm = await vscode.window.showWarningMessage(
+          'This will delete history for all prompt files. Are you sure?',
+          'Yes, clear all',
+          'Cancel'
+        );
+        if (confirm !== 'Yes, clear all') { return; }
+
+        const historyDir = path.join(workspacePath, 'history');
+        if (fs.existsSync(historyDir)) {
+          fs.readdirSync(historyDir).forEach(file => {
+            fs.unlinkSync(path.join(historyDir, file));
+          });
+        }
+        vscode.window.showInformationMessage('All history cleared.');
         return;
       }
 
-      // If multiple prompt files exist, ask which one to clear
-      let selectedFile: string | undefined;
-      if (files.length === 1) {
-        selectedFile = files[0];
-      } else {
-        selectedFile = await vscode.window.showQuickPick(files, {
-          placeHolder: 'Select a prompt file to clear history for'
-        });
-      }
-
+      const selectedFile = await selectWatchedFile(promptsPath);
       if (!selectedFile) { return; }
 
       const filePath = path.join(promptsPath, selectedFile);
@@ -149,21 +187,37 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  // ─── File Watcher ──────────────────────────────────────────────────────────
+  // ─── File Watcher Setup ────────────────────────────────────────────────────
+  let watchedFile: string | undefined;
+
   const watcher = vscode.workspace.createFileSystemWatcher('**/prompts/**');
 
   watcher.onDidChange(async (uri) => {
-    // Only process .txt and .md files instead of the folder they're in to avoid server-side errors
-    const filePath = uri.fsPath;
-    if (!filePath.endsWith('.txt') && !filePath.endsWith('.md')) {
+    const fileName = path.basename(uri.fsPath);
+
+    // Guard: ignore non-prompt files
+    if (!uri.fsPath.endsWith('.txt') && !uri.fsPath.endsWith('.md')) {
       return;
     }
 
-    const promptText = fs.readFileSync(filePath, 'utf8');
+    // First save — ask the user which file to watch
+    if (!watchedFile) {
+      const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+      if (!workspacePath) { return; }
+
+      const promptsPath = path.join(workspacePath, 'prompts');
+      watchedFile = await selectWatchedFile(promptsPath);
+      if (!watchedFile) { return; }
+    }
+
+    // Only process the watched file
+    if (fileName !== watchedFile) { return; }
+
+    const promptText = fs.readFileSync(uri.fsPath, 'utf8');
     await sendToClaudeWithHistory(
-      filePath,
+      uri.fsPath,
       promptText,
-      `Auto-detected change in "${path.basename(filePath)}", sending to Claude...`
+      `Auto-detected change in "${fileName}", sending to Claude...`
     );
   });
 
