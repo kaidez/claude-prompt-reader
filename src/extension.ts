@@ -42,7 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
         ];
 
         const message = await client.messages.create({
-          model: claudeModel ?? 'claude-sonnet-4-6',
+          model: claudeModel ?? 'claude-haiku-4-5-20251001',
           max_tokens: 1024,
           messages: updatedHistory
         });
