@@ -3,18 +3,22 @@
 A VS Code extension that uses Claude's API to write a prompt, save the file, and Claude think through a response in the editor.
 
 Read this repo's related blog post at: [https://www.kaidez.com/building-ai-tools-claude-api/](https://www.kaidez.com/building-ai-tools-claude-api/)
+
 ---
 
 ## How It Works
 
 When you save a `.txt` or `.md` file in your `prompts/` folder, the extension detects the change, reads the file, and passes the contents to Claude. Claude doesn't just retrieve information — it reasons through what you wrote, applies deduction and contextual understanding, and generates a response that didn't exist before. That response comes back to your extension and opens in a new editor tab, right next to your code.
+
 ---
 
-## Why It Exists
+## Why I Did This
 
-This project demonstrates the core pattern behind enterprise integration platforms like Workato, Boomi, and MuleSoft:
+To get a better handle on how Claude's API works on from an enterprise integration engineering standpoint, not just Claude's the tooling.
 
-**Fetch → Transform → Load (FTL)**
+Platforms like Workato, Boomi, and MuleSot make me curious so i wantd to understand what that would look like if I did something similar from scratch.
+
+## The Fetch → Transform → Load (FTL) Pattern
 
 1. **Fetch** — read input from a source (your local file system via the VS Code workspace API)
 2. **Transform** — pass it through an intelligent processing layer (Claude's reasoning engine via the Anthropic SDK)
