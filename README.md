@@ -2,6 +2,7 @@
 
 A VS Code extension that uses Claude's API to write a prompt, save the file, and Claude think through a response in the editor.
 
+Read this repo's related blog post at: [https://www.kaidez.com/building-ai-tools-claude-api/](https://www.kaidez.com/building-ai-tools-claude-api/)
 ---
 
 ## How It Works
