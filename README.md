@@ -4,12 +4,9 @@ A VS Code extension that uses Claude's API to write a prompt, save the file, and
 
 ---
 
-## WHow It Works
+## How It Works
 
 When you save a `.txt` or `.md` file in your `prompts/` folder, the extension detects the change, reads the file, and passes the contents to Claude. Claude doesn't just retrieve information — it reasons through what you wrote, applies deduction and contextual understanding, and generates a response that didn't exist before. That response comes back to your extension and opens in a new editor tab, right next to your code.
-
-Without Claude, this is a file reader. With Claude, it's an intelligent pipeline.
-
 ---
 
 ## Why It Exists
@@ -78,7 +75,7 @@ npm install
 
 ### 3. Add your Anthropic API key
 
-- Open VS Code Settings (`Cmd+,`)
+- Open VS Code Settings (`Cmd+,` on Mac, `Ctrl+,` on Windows)
 - Search for **Claude Prompt Reader**
 - Paste your Anthropic API key into the **Api Key** field
 
@@ -90,7 +87,7 @@ Don't have a key? Get one at [console.anthropic.com](https://console.anthropic.c
 npm run compile
 ```
 
-Press `Fn+F5` (Mac) to launch the Extension Development Host.
+Press `Fn+F5` (Mac) or `F5` (Windows) to launch the Extension Development Host.
 
 ### 5. Create a prompts folder
 
@@ -102,7 +99,7 @@ In whatever workspace you open in the dev host, create a `prompts/` subfolder an
 
 **Auto mode:** Save any `.txt` or `.md` file inside your `prompts/` folder. The extension detects the change and automatically sends it to Claude. A progress notification appears while Claude works, then a new tab opens with the response.
 
-**Manual mode:** Open the Command Palette (`Cmd+Shift+P`) and run **Claude: Read Prompts**. The extension reads the first file it finds in your `prompts/` folder and sends it.
+**Manual mode:** Open the Command Palette (`Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows) and run **Claude: Read Prompts**. The extension reads the first file it finds in your `prompts/` folder and sends it.
 
 ---
 
