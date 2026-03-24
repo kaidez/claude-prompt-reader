@@ -13,7 +13,7 @@ When you save a `.txt` or `.md` file in your `prompts/` folder, the extension de
 
 This project demonstrates the core pattern behind enterprise integration platforms like Workato, Boomi, and MuleSoft:
 
-**Fetch → Transform → Load**
+**Fetch → Transform → Load (FTL)**
 
 1. **Fetch** — read input from a source (your local file system via the VS Code workspace API)
 2. **Transform** — pass it through an intelligent processing layer (Claude's reasoning engine via the Anthropic SDK)
