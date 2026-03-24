@@ -1,16 +1,10 @@
 # Claude Prompt Reader
 
-A VS Code extension that puts Claude's reasoning and deduction capabilities directly inside your development workflow. Write a prompt, save the file, and Claude thinks through it and responds — automatically, inside your editor.
+A VS Code extension that uses Claude's API to write a prompt, save the file, and Claude think through a response in the editor.
 
 ---
 
-## What This Is
-
-Claude Prompt Reader is an AI-powered automation pipeline built in TypeScript. It connects your local file system to the Anthropic API, using Claude as the cognitive engine at the center of the workflow.
-
-Here's the simplest way to understand how it works:
-
-**Your extension is the plumbing. Claude is the brain.**
+## WHow It Works
 
 When you save a `.txt` or `.md` file in your `prompts/` folder, the extension detects the change, reads the file, and passes the contents to Claude. Claude doesn't just retrieve information — it reasons through what you wrote, applies deduction and contextual understanding, and generates a response that didn't exist before. That response comes back to your extension and opens in a new editor tab, right next to your code.
 
