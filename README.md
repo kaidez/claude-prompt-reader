@@ -23,7 +23,7 @@ The file watcher adds **event-driven architecture** on top of that pipeline. The
 
 ---
 
-## How Claude's Reasoning Works Here
+## How Claude Works
 
 Claude is not a search engine. It doesn't look up answers. When your extension sends it a prompt, Claude draws on everything it was trained on to reason through your input and generate a response specific to what you asked.
 
@@ -153,18 +153,10 @@ claude-prompt-reader/
 
 ---
 
-## What I'd Add Next
+## Todos/Goals
 
 - **Save Selected Text command** — highlight any text in VS Code, right-click, save it directly to the `prompts/` folder
 - **Multiple file processing** — iterate through all files in `prompts/` rather than just the first one
 - **System prompt support** — add a configurable system prompt to shape how Claude responds across all requests
 - **Webhook output** — POST the enriched response to an external endpoint in addition to opening a tab
 - **Swap the data source** — replace the local file system with a GitHub Issues, Jira, or Zendesk feed to simulate a full enterprise integration pipeline
-
----
-
-## Why This Architecture Matters
-
-The pattern in this extension mirrors what enterprise integration engineers build every day. The file watcher is the trigger layer — equivalent to a webhook listener in Workato or a scheduled poller in Boomi. The Anthropic SDK call is the enrichment layer — equivalent to calling an external AI service to classify, summarize, or route business data. The output tab is the destination layer — equivalent to writing enriched records to a CRM, database, or downstream system.
-
-Building this from scratch in TypeScript demonstrates an understanding of the architecture, not just the tooling.
