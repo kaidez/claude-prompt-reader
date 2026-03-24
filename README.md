@@ -177,10 +177,3 @@ claude-prompt-reader/
 The pattern in this extension mirrors what enterprise integration engineers build every day. The file watcher is the trigger layer — equivalent to a webhook listener in Workato or a scheduled poller in Boomi. The Anthropic SDK call is the enrichment layer — equivalent to calling an external AI service to classify, summarize, or route business data. The output tab is the destination layer — equivalent to writing enriched records to a CRM, database, or downstream system.
 
 Building this from scratch in TypeScript demonstrates an understanding of the architecture, not just the tooling.
-
----
-
-## Author
-
-**Kai Gittens**
-[kaidez.com](https://kaidez.com)
